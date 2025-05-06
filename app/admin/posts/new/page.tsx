@@ -26,16 +26,23 @@ export default function NewPostPage() {
       // タグを配列に変換
       const tagArray = tags.split(',').map(tag => tag.trim()).filter(tag => tag);
       
-      // 記事データを作成
+      // 記事データを作成（undefined値を除外）
       const postData = {
         title,
         slug,
         excerpt,
         content,
-        coverImage: coverImage || undefined,
-        tags: tagArray.length > 0 ? tagArray : undefined,
         publishedAt: Timestamp.now(),
       };
+      
+      // オプションフィールドは値がある場合のみ追加
+      if (coverImage) {
+        postData.coverImage = coverImage;
+      }
+      
+      if (tagArray.length > 0) {
+        postData.tags = tagArray;
+      }
       
       // Firestoreに記事を保存
       const postId = await createPost(postData);

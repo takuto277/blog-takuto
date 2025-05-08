@@ -42,7 +42,7 @@ export default function AdminPostsPage() {
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-600"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
       </div>
     );
   }
@@ -53,7 +53,7 @@ export default function AdminPostsPage() {
         <h1 className="text-2xl font-bold text-gray-900">記事管理</h1>
         <Link 
           href="/admin/posts/new" 
-          className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 flex items-center"
+          className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 flex items-center"
         >
           <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
             <path fillRule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clipRule="evenodd" />
@@ -71,18 +71,18 @@ export default function AdminPostsPage() {
                   タイトル
                 </th>
                 <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  スラッグ
+                </th>
+                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   公開日
                 </th>
                 <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  タグ
-                </th>
-                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  操作
+                  アクション
                 </th>
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {posts.map((post) => {
+              {posts.map(post => {
                 const date = post.publishedAt instanceof Date 
                   ? post.publishedAt 
                   : new Date(post.publishedAt.seconds * 1000);
@@ -90,46 +90,26 @@ export default function AdminPostsPage() {
                 return (
                   <tr key={post.id} className="hover:bg-gray-50">
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="flex items-center">
-                        {post.coverImage && (
-                          <div className="flex-shrink-0 h-10 w-10 mr-3">
-                            <img className="h-10 w-10 rounded-md object-cover" src={post.coverImage} alt="" />
-                          </div>
-                        )}
-                        <div>
-                          <div className="text-sm font-medium text-gray-900 line-clamp-1">
-                            {post.title}
-                          </div>
-                          <div className="text-sm text-gray-500 line-clamp-1">
-                            {post.slug}
-                          </div>
-                        </div>
-                      </div>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      {date.toLocaleDateString('ja-JP')}
+                      <div className="text-sm font-medium text-gray-900">{post.title}</div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="flex flex-wrap gap-1">
-                        {post.tags && post.tags.map(tag => (
-                          <span key={tag} className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                            {tag}
-                          </span>
-                        ))}
-                      </div>
+                      <div className="text-sm text-gray-500">{post.slug}</div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="text-sm text-gray-500">{date.toLocaleDateString('ja-JP')}</div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                       <div className="flex space-x-3">
                         <Link 
                           href={`/posts/${post.slug}`} 
-                          className="text-indigo-600 hover:text-indigo-900"
+                          className="text-blue-500 hover:text-blue-700"
                           target="_blank"
                         >
                           表示
                         </Link>
                         <Link 
                           href={`/admin/posts/edit/${post.id}`} 
-                          className="text-blue-600 hover:text-blue-900"
+                          className="text-blue-500 hover:text-blue-700"
                         >
                           編集
                         </Link>
@@ -138,7 +118,7 @@ export default function AdminPostsPage() {
                           className={`${
                             deleteConfirm === post.id
                               ? 'text-red-600 font-bold'
-                              : 'text-gray-600 hover:text-red-900'
+                              : 'text-gray-600 hover:text-red-700'
                           }`}
                         >
                           {deleteConfirm === post.id ? '削除確認' : '削除'}
@@ -160,7 +140,7 @@ export default function AdminPostsPage() {
           <p className="text-gray-500 mb-6">新しい記事を作成して始めましょう</p>
           <Link 
             href="/admin/posts/new" 
-            className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700"
+            className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-500 hover:bg-blue-600"
           >
             <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
               <path fillRule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clipRule="evenodd" />
@@ -173,7 +153,7 @@ export default function AdminPostsPage() {
       <div className="mt-8">
         <Link 
           href="/admin" 
-          className="inline-flex items-center text-blue-600 hover:text-blue-800"
+          className="inline-flex items-center text-blue-500 hover:text-blue-700"
         >
           <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
             <path fillRule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clipRule="evenodd" />

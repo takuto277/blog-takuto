@@ -2,17 +2,11 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { getPostBySlug } from '@/lib/firestore';
 import { Metadata } from 'next';
-
-// 型定義
-type PostParams = {
-  params: {
-    slug: string;
-  };
-};
+import { PageProps } from '@/types';
 
 // メタデータ生成関数
-export async function generateMetadata({ params }: PostParams): Promise<Metadata> {
-  const post = await getPostBySlug(params.slug);
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+  const post = await getPostBySlug(params.slug as string);
   
   if (!post) {
     return {
@@ -27,9 +21,9 @@ export async function generateMetadata({ params }: PostParams): Promise<Metadata
 }
 
 // ページコンポーネント
-export default async function PostPage({ params }: PostParams) {
+export default async function PostPage({ params }: PageProps) {
   // Firestoreから記事を取得
-  const post = await getPostBySlug(params.slug);
+  const post = await getPostBySlug(params.slug as string);
   
   // 記事が存在しない場合は404ページを表示
   if (!post) {

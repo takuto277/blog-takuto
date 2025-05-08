@@ -1,9 +1,17 @@
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { getPostBySlug } from '@/lib/firestore';
+import { Metadata } from 'next';
 
-// 動的メタデータ
-export async function generateMetadata({ params }: { params: { slug: string } }) {
+// 型定義を修正
+type PostPageParams = {
+  params: {
+    slug: string;
+  };
+};
+
+// 動的メタデータの型を修正
+export async function generateMetadata({ params }: PostPageParams): Promise<Metadata> {
   const post = await getPostBySlug(params.slug);
   
   if (!post) {
@@ -18,7 +26,8 @@ export async function generateMetadata({ params }: { params: { slug: string } })
   };
 }
 
-export default async function PostPage({ params }: { params: { slug: string } }) {
+// コンポーネントの型も修正
+export default async function PostPage({ params }: PostPageParams) {
   // Firestoreから記事を取得
   const post = await getPostBySlug(params.slug);
   

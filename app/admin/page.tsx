@@ -1,137 +1,158 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import Link from 'next/link';
+import { signInWithEmailAndPassword, signOut, onAuthStateChanged } from 'firebase/auth';
 import { auth } from '@/lib/firebase';
-import { signIn, signOut } from '@/lib/auth';
-import { onAuthStateChanged } from 'firebase/auth';
+import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 
 export default function AdminPage() {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
-  
+  const [error, setError] = useState('');
+  const router = useRouter();
+
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser);
       setLoading(false);
     });
-    
+
     return () => unsubscribe();
   }, []);
-  
-  const handleLogout = async () => {
-    try {
-      await signOut();
-    } catch (error: any) {
-      alert(error.message);
-    }
-  };
 
-  // ログイン後に表示する管理メニュー
-  const AdminMenu = () => (
-    <div className="bg-white shadow-md rounded-lg p-6">
-      <h2 className="text-xl font-semibold mb-4">管理メニュー</h2>
-      <p className="mb-4">ログイン中: {user?.email}</p>
-      <div className="space-y-2">
-        <Link 
-          href="/admin/posts" 
-          className="block px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 text-center"
-        >
-          記事管理
-        </Link>
-        <button
-          onClick={handleLogout}
-          className="w-full px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700"
-        >
-          ログアウト
-        </button>
-      </div>
-    </div>
-  );
-
-  // ログイン状態に応じて表示を切り替え
-  return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-      <h1 className="text-3xl font-bold mb-8">管理画面</h1>
-      
-      {loading ? (
-        <p>読み込み中...</p>
-      ) : user ? (
-        <AdminMenu />
-      ) : (
-        <LoginForm />
-      )}
-      
-      <div className="mt-8">
-        <Link href="/" className="text-blue-600 hover:underline">
-          ← ホームに戻る
-        </Link>
-      </div>
-    </div>
-  );
-}
-
-function LoginForm() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
-  
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsLoading(true);
     setError('');
     
     try {
-      await signIn(email, password);
-    } catch (error: any) {
-      setError(error.message);
-    } finally {
-      setIsLoading(false);
+      await signInWithEmailAndPassword(auth, email, password);
+      router.push('/admin/posts');
+    } catch (err: any) {
+      setError('ログインに失敗しました。メールアドレスとパスワードを確認してください。');
+      console.error(err);
     }
   };
 
+  const handleLogout = async () => {
+    try {
+      await signOut(auth);
+    } catch (err) {
+      console.error('ログアウトエラー:', err);
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-600"></div>
+      </div>
+    );
+  }
+
   return (
-    <div className="bg-white shadow-md rounded-lg p-6 max-w-md mx-auto">
-      <h2 className="text-xl font-semibold mb-4">ログイン</h2>
-      
-      {error && (
-        <div className="bg-red-50 border-l-4 border-red-500 p-4 mb-4">
-          <p className="text-red-700">{error}</p>
+    <div className="min-h-screen bg-gray-50 py-12">
+      <div className="max-w-md mx-auto bg-white rounded-xl shadow-md overflow-hidden">
+        <div className="bg-gradient-to-r from-blue-600 to-indigo-600 p-6">
+          <h1 className="text-2xl font-bold text-white">管理画面</h1>
         </div>
-      )}
-      
-      <form onSubmit={handleLogin}>
-        <div className="mb-4">
-          <label htmlFor="email" className="block text-gray-700 mb-2">メールアドレス</label>
-          <input
-            type="email"
-            id="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            required
-          />
+        
+        <div className="p-6">
+          {user ? (
+            <div>
+              <div className="mb-6 p-4 bg-blue-50 rounded-lg">
+                <p className="text-gray-700">
+                  <span className="font-medium">{user.email}</span> としてログインしています
+                </p>
+              </div>
+              
+              <div className="grid gap-4 mb-8">
+                <Link 
+                  href="/admin/posts" 
+                  className="bg-white border border-gray-200 p-4 rounded-lg shadow-sm hover:shadow-md transition-shadow flex items-center"
+                >
+                  <div className="bg-blue-100 p-3 rounded-full mr-4">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                    </svg>
+                  </div>
+                  <div>
+                    <h3 className="font-medium text-gray-900">記事管理</h3>
+                    <p className="text-sm text-gray-500">記事の一覧、編集、削除</p>
+                  </div>
+                </Link>
+                
+                <Link 
+                  href="/admin/posts/new" 
+                  className="bg-white border border-gray-200 p-4 rounded-lg shadow-sm hover:shadow-md transition-shadow flex items-center"
+                >
+                  <div className="bg-green-100 p-3 rounded-full mr-4">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                    </svg>
+                  </div>
+                  <div>
+                    <h3 className="font-medium text-gray-900">新規記事作成</h3>
+                    <p className="text-sm text-gray-500">新しい記事を書く</p>
+                  </div>
+                </Link>
+              </div>
+              
+              <button
+                onClick={handleLogout}
+                className="w-full bg-gray-100 text-gray-700 py-2 px-4 rounded-lg hover:bg-gray-200 transition-colors"
+              >
+                ログアウト
+              </button>
+            </div>
+          ) : (
+            <form onSubmit={handleLogin} className="space-y-6">
+              {error && (
+                <div className="bg-red-50 text-red-600 p-4 rounded-lg text-sm">
+                  {error}
+                </div>
+              )}
+              
+              <div>
+                <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
+                  メールアドレス
+                </label>
+                <input
+                  id="email"
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                />
+              </div>
+              
+              <div>
+                <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
+                  パスワード
+                </label>
+                <input
+                  id="password"
+                  type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                />
+              </div>
+              
+              <button
+                type="submit"
+                className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white py-2 px-4 rounded-md hover:from-blue-700 hover:to-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+              >
+                ログイン
+              </button>
+            </form>
+          )}
         </div>
-        <div className="mb-6">
-          <label htmlFor="password" className="block text-gray-700 mb-2">パスワード</label>
-          <input
-            type="password"
-            id="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            required
-          />
-        </div>
-        <button
-          type="submit"
-          disabled={isLoading}
-          className="w-full bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 disabled:opacity-50"
-        >
-          {isLoading ? 'ログイン中...' : 'ログイン'}
-        </button>
-      </form>
+      </div>
     </div>
   );
 } 

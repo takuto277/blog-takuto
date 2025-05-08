@@ -50,17 +50,22 @@ export async function getPostBySlug(slug: string): Promise<Post | null> {
 
 // IDから記事を取得
 export async function getPostById(id: string): Promise<Post | null> {
-  const docRef = doc(db, 'posts', id);
-  const docSnap = await getDoc(docRef);
-  
-  if (!docSnap.exists()) {
-    return null;
+  try {
+    const docRef = doc(db, 'posts', id);
+    const docSnap = await getDoc(docRef);
+    
+    if (docSnap.exists()) {
+      return {
+        id: docSnap.id,
+        ...docSnap.data()
+      } as Post;
+    } else {
+      return null;
+    }
+  } catch (error) {
+    console.error('Error getting post by ID:', error);
+    throw error;
   }
-  
-  return {
-    id: docSnap.id,
-    ...docSnap.data(),
-  } as Post;
 }
 
 // 記事を作成
@@ -75,13 +80,15 @@ export async function createPost(postData: Omit<Post, 'id'>): Promise<string> {
 }
 
 // 記事を更新
-export async function updatePost(id: string, postData: Partial<Post>): Promise<void> {
-  const docRef = doc(db, 'posts', id);
-  
-  await updateDoc(docRef, {
-    ...postData,
-    updatedAt: Timestamp.now(),
-  });
+export async function updatePost(id: string, postData: any): Promise<boolean> {
+  try {
+    const docRef = doc(db, 'posts', id);
+    await updateDoc(docRef, postData);
+    return true;
+  } catch (error) {
+    console.error('Error updating post:', error);
+    throw error;
+  }
 }
 
 // 記事を削除

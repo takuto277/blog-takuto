@@ -1,33 +1,56 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { createPost } from '@/lib/firestore';
-import { Timestamp } from 'firebase/firestore';
+import { getPostById, updatePost } from '@/lib/firestore';
 import Link from 'next/link';
 
-export default function NewPostPage() {
+export default function EditPostPage({ params }: { params: { id: string } }) {
   const [title, setTitle] = useState('');
   const [slug, setSlug] = useState('');
   const [excerpt, setExcerpt] = useState('');
   const [content, setContent] = useState('');
   const [coverImage, setCoverImage] = useState('');
   const [tags, setTags] = useState('');
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
   
   const router = useRouter();
+  const { id } = params;
+
+  useEffect(() => {
+    const fetchPost = async () => {
+      try {
+        const post = await getPostById(id);
+        if (post) {
+          setTitle(post.title);
+          setSlug(post.slug);
+          setExcerpt(post.excerpt);
+          setContent(post.content);
+          setCoverImage(post.coverImage || '');
+          setTags(post.tags ? post.tags.join(', ') : '');
+        } else {
+          setError('記事が見つかりませんでした');
+        }
+      } catch (err) {
+        console.error('記事の取得に失敗しました:', err);
+        setError('記事の取得に失敗しました');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchPost();
+  }, [id]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setLoading(true);
+    setSaving(true);
     setError('');
     
     try {
-      // スラッグが空の場合はタイトルから生成
-      const finalSlug = slug || title.toLowerCase().replace(/\s+/g, '-').replace(/[^\w-]+/g, '');
-      
       // タグを配列に変換
       const tagArray = tags.split(',')
         .map(tag => tag.trim())
@@ -36,10 +59,9 @@ export default function NewPostPage() {
       // 記事データの作成
       const postData = {
         title,
-        slug: finalSlug,
+        slug,
         excerpt,
         content,
-        publishedAt: Timestamp.now(),
       };
       
       // オプションフィールドは値がある場合のみ追加
@@ -51,18 +73,10 @@ export default function NewPostPage() {
         postData.tags = tagArray;
       }
       
-      // Firestoreに記事を保存
-      await createPost(postData);
+      // Firestoreで記事を更新
+      await updatePost(id, postData);
       
       setSuccess(true);
-      
-      // フォームをリセット
-      setTitle('');
-      setSlug('');
-      setExcerpt('');
-      setContent('');
-      setCoverImage('');
-      setTags('');
       
       // 3秒後に記事一覧ページに遷移
       setTimeout(() => {
@@ -70,10 +84,10 @@ export default function NewPostPage() {
       }, 3000);
       
     } catch (err) {
-      console.error('記事の作成に失敗しました:', err);
-      setError('記事の作成に失敗しました。もう一度お試しください。');
+      console.error('記事の更新に失敗しました:', err);
+      setError('記事の更新に失敗しました。もう一度お試しください。');
     } finally {
-      setLoading(false);
+      setSaving(false);
     }
   };
 
@@ -87,10 +101,18 @@ export default function NewPostPage() {
     }
   };
 
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-600"></div>
+      </div>
+    );
+  }
+
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <div className="mb-8 flex justify-between items-center">
-        <h1 className="text-2xl font-bold text-gray-900">新規記事作成</h1>
+        <h1 className="text-2xl font-bold text-gray-900">記事の編集</h1>
         <Link 
           href="/admin/posts"
           className="inline-flex items-center text-blue-600 hover:text-blue-800"
@@ -112,7 +134,7 @@ export default function NewPostPage() {
             </div>
             <div className="ml-3">
               <p className="text-sm text-green-700">
-                記事が正常に作成されました。記事一覧ページにリダイレクトします...
+                記事が正常に更新されました。記事一覧ページにリダイレクトします...
               </p>
             </div>
           </div>
@@ -135,7 +157,6 @@ export default function NewPostPage() {
                 type="text"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
-                onBlur={generateSlugFromTitle}
                 required
                 className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               />
@@ -154,7 +175,6 @@ export default function NewPostPage() {
                   onChange={(e) => setSlug(e.target.value)}
                   required
                   className="flex-grow px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                  placeholder="my-post-title"
                 />
                 <button
                   type="button"
@@ -206,7 +226,6 @@ export default function NewPostPage() {
                 value={coverImage}
                 onChange={(e) => setCoverImage(e.target.value)}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                placeholder="https://example.com/image.jpg"
               />
               {coverImage && (
                 <div className="mt-2">
@@ -233,7 +252,6 @@ export default function NewPostPage() {
                 value={tags}
                 onChange={(e) => setTags(e.target.value)}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                placeholder="プログラミング, Next.js, React"
               />
             </div>
             
@@ -246,10 +264,10 @@ export default function NewPostPage() {
               </Link>
               <button
                 type="submit"
-                disabled={loading}
+                disabled={saving}
                 className="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50"
               >
-                {loading ? '保存中...' : '保存する'}
+                {saving ? '保存中...' : '更新する'}
               </button>
             </div>
           </div>

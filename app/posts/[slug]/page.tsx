@@ -7,9 +7,11 @@ import TableOfContents from '@/components/posts/TableOfContents';
 import fs from 'fs';
 import path from 'path';
 import Image from 'next/image';
-import { MDXRemote } from 'next-mdx-remote/rsc';
+import { serialize } from 'next-mdx-remote/serialize';
+import { MDXRemote } from 'next-mdx-remote';
 import CustomImage from '@/components/CustomImage';
 import CustomLink from '@/components/CustomLink';
+import MDXContent from '@/components/MDXContent';
 
 // 静的パスの生成
 export async function generateStaticParams() {
@@ -40,7 +42,7 @@ export async function generateMetadata({ params }: { params: { slug: string } })
 }
 
 // 動的にMDXコンテンツをインポート
-const MDXContent = dynamic(async () => {
+const MDXContentComponent = dynamic(async () => {
   // params が未定義の場合は空のコンポーネントを返す
   if (!params?.slug) {
     return () => <div>Loading...</div>;
@@ -73,6 +75,13 @@ export default async function PostPage({ params }: { params: { slug: string } })
   // MDX ファイルを直接読み込む
   const fullPath = path.join(process.cwd(), 'posts', `${resolvedParams.slug}.mdx`);
   const mdxContent = fs.readFileSync(fullPath, 'utf8');
+  
+  // MDXをシリアライズ
+  const mdxSource = await serialize(mdxContent, {
+    mdxOptions: {
+      development: process.env.NODE_ENV === 'development',
+    },
+  });
   
   return (
     <div className="bg-gray-50 min-h-screen py-12">
@@ -121,10 +130,7 @@ export default async function PostPage({ params }: { params: { slug: string } })
               <TableOfContents />
             </div>
             <div className="md:w-3/4 prose prose-indigo max-w-none">
-              <MDXRemote 
-                source={post.content} 
-                components={components} 
-              />
+              <MDXContent source={mdxSource} />
             </div>
           </div>
         </div>

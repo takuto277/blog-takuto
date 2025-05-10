@@ -33,10 +33,15 @@ export async function getAllPosts() {
       // gray-matterでメタデータを解析
       const { data } = matter(fileContents);
       
+      // ファイル名から言語情報を抽出
+      const langMatch = fileName.match(/\.([a-z]{2})\.mdx$/);
+      const language = langMatch ? langMatch[1] : null;
+      
       // データをオブジェクトとして返す
       return {
         slug,
         ...data,
+        language: language || data.language || null,
       };
     })
     // 公開日で降順ソート
@@ -69,4 +74,18 @@ export async function getPostBySlug(slug: string) {
     },
     content
   };
+}
+
+// 言語に基づいて記事をフィルタリングする関数
+export async function getPostsByLanguage(language: string) {
+  const allPosts = await getAllPosts();
+  
+  // 言語指定がある記事をフィルタリング
+  return allPosts.filter(post => {
+    // 言語が指定されていない記事は両方の言語で表示
+    if (!post.frontMatter.language) return true;
+    
+    // 言語が一致する記事のみ表示
+    return post.frontMatter.language === language;
+  });
 } 

@@ -1,9 +1,10 @@
 const withMDX = require('@next/mdx')({
   extension: /\.mdx?$/,
   options: {
-    // remarkPlugins: [],
-    // rehypePlugins: [],
-    // 必要に応じてプラグインを追加
+    remarkPlugins: [],
+    rehypePlugins: [],
+    // MDXコンポーネントをインポートするためのパスを指定
+    providerImportSource: "@mdx-js/react",
   },
 });
 
@@ -17,14 +18,14 @@ const nextConfig = {
     };
     return config;
   },
-  // MDX ファイルをページとして扱う
-  pageExtensions: ['js', 'jsx', 'mdx', 'ts', 'tsx'],
+  // MDXファイルをページとして扱う設定
+  pageExtensions: ['ts', 'tsx', 'js', 'jsx', 'md', 'mdx'],
   typescript: {
     // ビルド時のTypeScriptエラーを警告として扱う
     ignoreBuildErrors: true,
   },
   images: {
-    domains: ['via.placeholder.com', 'images.unsplash.com'],
+    domains: ['images.unsplash.com'],
   },
 };
 

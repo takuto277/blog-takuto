@@ -1,20 +1,20 @@
 import fs from 'fs';
 import path from 'path';
 import matter from 'gray-matter';
-import rehypeSlug from 'rehype-slug';
-import rehypeAutolinkHeadings from 'rehype-autolink-headings';
-import rehypeHighlight from 'rehype-highlight';
+import { serialize } from 'next-mdx-remote/serialize';
 
 const postsDirectory = path.join(process.cwd(), 'posts');
 
 // すべての記事のスラッグを取得
 export function getAllPostSlugs() {
   const fileNames = fs.readdirSync(postsDirectory);
-  return fileNames.map(fileName => {
-    return {
-      slug: fileName.replace(/\.mdx$/, '')
-    };
-  });
+  return fileNames
+    .filter(fileName => fileName.endsWith('.mdx'))
+    .map(fileName => {
+      return {
+        slug: fileName.replace(/\.mdx$/, '')
+      };
+    });
 }
 
 // すべての記事のメタデータを取得
@@ -33,15 +33,10 @@ export async function getAllPosts() {
       // gray-matterでメタデータを解析
       const { data } = matter(fileContents);
       
-      // ファイル名から言語情報を抽出
-      const langMatch = fileName.match(/\.([a-z]{2})\.mdx$/);
-      const language = langMatch ? langMatch[1] : null;
-      
       // データをオブジェクトとして返す
       return {
         slug,
         ...data,
-        language: language || data.language || null,
       };
     })
     // 公開日で降順ソート

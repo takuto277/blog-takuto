@@ -134,9 +134,13 @@ body {
   top: 2rem;
   max-height: calc(100vh - 4rem);
   overflow-y: auto;
-  padding-right: 1rem;
+  padding: 1rem;
   font-size: 0.875rem;
   scrollbar-width: thin;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.5rem;
+  background-color: #f9fafb;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
 }
 
 .table-of-contents::-webkit-scrollbar {
@@ -156,6 +160,7 @@ body {
   font-size: 1rem;
   font-weight: 600;
   margin-bottom: 0.75rem;
+  color: #111827;
 }
 
 .table-of-contents ul {

@@ -2,6 +2,7 @@ import HeroSection from '@/components/home/HeroSection';
 import RecentPostsSection from '@/components/home/RecentPostsSection';
 import AuthorProfileSection from '@/components/home/AuthorProfileSection';
 import { getAllPosts } from '@/lib/mdx';
+import Image from 'next/image';
 
 /**
  * ホームページコンポーネント

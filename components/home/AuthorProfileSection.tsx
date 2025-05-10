@@ -1,3 +1,5 @@
+import Image from 'next/image';
+
 export default function AuthorProfileSection() {
   return (
     <section className="py-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
@@ -11,6 +13,20 @@ export default function AuthorProfileSection() {
           </div>
           <div className="p-8">
             <h2 className="text-2xl font-bold text-gray-900 mb-4 font-serif">著者について</h2>
+            <div className="flex items-center mb-4">
+              <div className="relative w-16 h-16 mr-4 overflow-hidden rounded-full">
+                <Image
+                  src="/images/profile/author.jpg"
+                  alt="著者のプロフィール画像"
+                  fill
+                  className="object-cover"
+                />
+              </div>
+              <div>
+                <h3 className="text-xl font-bold">著者名</h3>
+                <p className="text-gray-600">簡単な自己紹介</p>
+              </div>
+            </div>
             <p className="text-gray-600 mb-6 leading-relaxed">
               テクノロジーとデザインが好きなエンジニアです。日々の学びや発見をこのブログで共有しています。
               新しい技術を学ぶことと、それを実際のプロジェクトに活かすことに情熱を持っています。

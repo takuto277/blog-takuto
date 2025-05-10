@@ -1,4 +1,11 @@
-const withMDX = require('@next/mdx')();
+const withMDX = require('@next/mdx')({
+  extension: /\.mdx?$/,
+  options: {
+    // remarkPlugins: [],
+    // rehypePlugins: [],
+    // 必要に応じてプラグインを追加
+  },
+});
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
@@ -15,6 +22,9 @@ const nextConfig = {
   typescript: {
     // ビルド時のTypeScriptエラーを警告として扱う
     ignoreBuildErrors: true,
+  },
+  images: {
+    domains: ['via.placeholder.com', 'images.unsplash.com'],
   },
 };
 

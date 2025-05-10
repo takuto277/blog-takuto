@@ -6,6 +6,10 @@ import dynamic from 'next/dynamic';
 import TableOfContents from '@/components/posts/TableOfContents';
 import fs from 'fs';
 import path from 'path';
+import Image from 'next/image';
+import { MDXRemote } from 'next-mdx-remote/rsc';
+import CustomImage from '@/components/CustomImage';
+import CustomLink from '@/components/CustomLink';
 
 // 静的パスの生成
 export async function generateStaticParams() {
@@ -52,6 +56,12 @@ const MDXContent = dynamic(async () => {
   }
 }, { ssr: true });
 
+// コンポーネントの設定
+const components = {
+  img: CustomImage,
+  a: CustomLink,
+};
+
 export default async function PostPage({ params }: { params: { slug: string } }) {
   const resolvedParams = await params;
   const post = await getPostBySlug(resolvedParams.slug);
@@ -69,10 +79,12 @@ export default async function PostPage({ params }: { params: { slug: string } })
       <article className="max-w-4xl mx-auto bg-white rounded-2xl shadow-md overflow-hidden border border-gray-100">
         {post.frontMatter.coverImage && (
           <div className="h-96 w-full overflow-hidden relative">
-            <img 
+            <Image 
               src={post.frontMatter.coverImage} 
               alt={post.frontMatter.title} 
-              className="w-full h-full object-cover"
+              fill
+              priority
+              className="object-cover"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
             <div className="absolute bottom-0 left-0 p-8 text-white">
@@ -109,8 +121,10 @@ export default async function PostPage({ params }: { params: { slug: string } })
               <TableOfContents />
             </div>
             <div className="md:w-3/4 prose prose-indigo max-w-none">
-              {/* MDX コンテンツを直接表示 */}
-              <div dangerouslySetInnerHTML={{ __html: post.content }} />
+              <MDXRemote 
+                source={post.content} 
+                components={components} 
+              />
             </div>
           </div>
         </div>

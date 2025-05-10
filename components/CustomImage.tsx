@@ -1,39 +1,48 @@
+'use client';
+
 import Image from 'next/image';
+import { useState } from 'react';
 
 type CustomImageProps = {
   src: string;
   alt: string;
   width?: number;
   height?: number;
+  fill?: boolean;
 };
 
-export default function CustomImage({ src, alt, width, height }: CustomImageProps) {
-  // 外部URLかどうかを判定
-  const isExternal = src.startsWith('http');
+export default function CustomImage({ src, alt, width, height, fill }: CustomImageProps) {
+  const [isLoading, setLoading] = useState(true);
   
-  if (isExternal) {
-    // 外部画像の場合は通常のimgタグを使用
+  // 画像のサイズが不明な場合は fill モードを使用
+  if (fill || (!width && !height)) {
     return (
-      <img 
-        src={src} 
-        alt={alt} 
-        className="rounded-lg my-6 w-full"
-        loading="lazy"
-      />
+      <div className="relative w-full aspect-video my-4">
+        <Image
+          src={src}
+          alt={alt || ''}
+          fill
+          className={`object-cover rounded-lg transition-opacity duration-300 ${
+            isLoading ? 'opacity-0' : 'opacity-100'
+          }`}
+          onLoadingComplete={() => setLoading(false)}
+          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+        />
+      </div>
     );
   }
   
-  // ローカル画像の場合はNext.js Imageを使用
+  // サイズが指定されている場合は通常モード
   return (
-    <div className="my-6">
-      <Image
-        src={src}
-        alt={alt}
-        width={width || 800}
-        height={height || 500}
-        className="rounded-lg"
-        loading="lazy"
-      />
-    </div>
+    <Image
+      src={src}
+      alt={alt || ''}
+      className={`rounded-lg transition-opacity duration-300 ${
+        isLoading ? 'opacity-0' : 'opacity-100'
+      }`}
+      onLoadingComplete={() => setLoading(false)}
+      width={width || 800}
+      height={height || 500}
+    />
   );
 } 

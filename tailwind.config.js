@@ -1,8 +1,8 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   content: [
-    './app/**/*.{js,ts,jsx,tsx}',
-    './components/**/*.{js,ts,jsx,tsx}',
+    './app/**/*.{js,ts,jsx,tsx,mdx}',
+    './components/**/*.{js,ts,jsx,tsx,mdx}',
   ],
   // darkMode: 'class', // この行を削除または以下のようにコメントアウト
   theme: {
@@ -19,24 +19,26 @@ module.exports = {
           // ...他の色調
         },
       },
-      typography: (theme) => ({
+      typography: {
         DEFAULT: {
           css: {
-            color: theme('colors.gray.800'),
+            maxWidth: '100%',
+            h1: {
+              textAlign: 'center',
+            },
             h2: {
-              fontFamily: 'var(--font-playfair)',
-              fontWeight: '700',
+              textAlign: 'left',
             },
-            a: {
-              color: theme('colors.indigo.600'),
-              '&:hover': {
-                color: theme('colors.indigo.800'),
-              },
+            h3: {
+              textAlign: 'left',
             },
-            // 他のスタイル
+            p: {
+              fontSize: '1rem',
+              lineHeight: '1.6',
+            },
           },
         },
-      }),
+      },
     },
   },
   plugins: [

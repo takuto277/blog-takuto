@@ -9,5 +9,5 @@ export default function PostTitle({ post }) {
     ? post.frontMatter.titleJa 
     : post.frontMatter.title;
     
-  return <h1 className="text-3xl font-bold mb-4">{title}</h1>;
+  return <h1 className="text-3xl font-bold mb-4 text-center post-title">{title}</h1>;
 } 

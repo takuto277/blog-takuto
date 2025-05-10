@@ -16,6 +16,8 @@ import CustomMDXProvider from '@/components/MDXProvider';
 import LanguageAwarePostTitle from '@/components/posts/LanguageAwarePostTitle';
 import MDXComponents from '@/components/MDXComponents';
 import PostTitle from '@/components/posts/PostTitle';
+import LanguageContent from '@/components/LanguageContent';
+import MobileTableOfContents from '@/components/posts/MobileTableOfContents';
 
 // 静的パスの生成
 export async function generateStaticParams() {
@@ -61,10 +63,28 @@ const MDXContentComponent = dynamic(async () => {
   }
 }, { ssr: true });
 
+// カスタム画像コンポーネント
+function CustomMDXImage(props) {
+  const { src, alt, ...rest } = props;
+  return (
+    <div className="flex justify-center my-6">
+      <Image 
+        src={src} 
+        alt={alt || ''} 
+        width={800}
+        height={500}
+        className="rounded-lg max-w-[50%]" // 画像の最大幅を50%に制限
+        {...rest}
+      />
+    </div>
+  );
+}
+
 // コンポーネントの設定
 const components = {
-  img: CustomImage,
+  img: CustomMDXImage,
   a: CustomLink,
+  LanguageContent,
 };
 
 export default async function PostPage({ params }: { params: { slug: string } }) {
@@ -75,21 +95,37 @@ export default async function PostPage({ params }: { params: { slug: string } })
   }
   
   return (
-    <div className="max-w-4xl mx-auto px-4 py-12">
-      <article className="prose lg:prose-xl mx-auto">
-        <PostTitle post={post} />
+    <div className="max-w-6xl mx-auto px-4 py-12">
+      <div className="flex flex-col lg:flex-row">
+        {/* デスクトップ用目次 */}
+        <TableOfContents />
         
-        <div className="mb-8 text-gray-600">
-          {new Date(post.frontMatter.publishedAt).toLocaleDateString()}
-        </div>
+        {/* 記事本文 */}
+        <article className="prose mx-auto break-words flex-1 overflow-hidden">
+          <div className="text-center mb-8">
+            <PostTitle post={post} />
+            
+            <div className="text-gray-600">
+              {new Date(post.frontMatter.publishedAt).toLocaleDateString()}
+            </div>
+          </div>
+          
+          <CustomMDXProvider>
+            <MDXRemote 
+              source={post.content} 
+              components={components}
+            />
+          </CustomMDXProvider>
+        </article>
         
-        <CustomMDXProvider>
-          <MDXRemote 
-            source={post.content} 
-            components={MDXComponents} 
-          />
-        </CustomMDXProvider>
-      </article>
+        {/* 右側の余白（バランス用） */}
+        <div className="hidden lg:block w-64"></div>
+      </div>
+      
+      {/* モバイル用目次（クライアントコンポーネント） */}
+      <div className="lg:hidden">
+        <MobileTableOfContents headings={[]} /> {/* 実際のheadingsはクライアント側で取得 */}
+      </div>
     </div>
   );
 } 

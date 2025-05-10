@@ -53,3 +53,139 @@ body {
 .prose code {
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
 }
+
+/* 記事内の画像サイズを調整 */
+.prose img {
+  max-width: 50% !important;
+  height: auto;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* 記事コンテンツの配置 */
+.prose {
+  margin-left: auto;
+  margin-right: auto;
+  text-align: left;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+/* 段落の設定 */
+.prose p {
+  word-break: break-word;
+  hyphens: none;
+  max-width: 100%;
+  letter-spacing: normal;
+  font-size: 1rem;
+  line-height: 1.6;
+}
+
+/* 記事タイトル（PostTitleコンポーネント）は中央揃え */
+.prose h1.post-title {
+  text-align: center;
+  font-size: 2rem;
+  margin-bottom: 1rem;
+}
+
+/* MDXコンテンツ内のh1は左揃え */
+.prose h1:not(.post-title) {
+  text-align: left;
+  font-size: 2rem;
+  margin-bottom: 1rem;
+}
+
+/* 他の見出しは左揃え */
+.prose h2, .prose h3, .prose h4, .prose h5, .prose h6 {
+  text-align: left;
+}
+
+/* 見出しのサイズ設定 */
+.prose h2 {
+  font-size: 1.5rem;
+  margin-top: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.prose h3 {
+  font-size: 1.25rem;
+  margin-top: 1.25rem;
+  margin-bottom: 0.75rem;
+}
+
+/* リストの設定 */
+.prose ul, .prose ol {
+  text-align: left;
+  font-size: 1rem;
+}
+
+/* 画像のレスポンシブ対応 */
+@media (max-width: 768px) {
+  .prose img {
+    max-width: 80% !important;
+  }
+}
+
+/* 目次のスタイル */
+.table-of-contents {
+  position: sticky;
+  top: 2rem;
+  max-height: calc(100vh - 4rem);
+  overflow-y: auto;
+  padding-right: 1rem;
+  font-size: 0.875rem;
+  scrollbar-width: thin;
+}
+
+.table-of-contents::-webkit-scrollbar {
+  width: 4px;
+}
+
+.table-of-contents::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+.table-of-contents::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 4px;
+}
+
+.table-of-contents h2 {
+  font-size: 1rem;
+  font-weight: 600;
+  margin-bottom: 0.75rem;
+}
+
+.table-of-contents ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.table-of-contents li {
+  margin-bottom: 0.5rem;
+}
+
+.table-of-contents a {
+  color: #4b5563;
+  text-decoration: none;
+  transition: color 0.2s;
+  display: block;
+  padding: 0.25rem 0;
+}
+
+.table-of-contents a:hover {
+  color: #4f46e5;
+}
+
+.table-of-contents a.active {
+  color: #4f46e5;
+  font-weight: 500;
+}
+
+/* 見出しのスタイル - アンカーリンク用 */
+.prose h1, .prose h2, .prose h3 {
+  scroll-margin-top: 5rem;
+}

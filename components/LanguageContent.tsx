@@ -12,7 +12,11 @@ export default function LanguageContent({
   const { language } = useLanguage();
   
   if (lang === language) {
-    return <>{children}</>;
+    return (
+      <div className="break-words overflow-hidden">
+        {children}
+      </div>
+    );
   }
   
   return null;

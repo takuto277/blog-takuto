@@ -6,7 +6,9 @@ import MDXComponents from './MDXComponents';
 export default function CustomMDXProvider({ children }) {
   return (
     <MDXProvider components={MDXComponents}>
-      {children}
+      <div className="mx-auto max-w-3xl overflow-hidden mdx-content">
+        {children}
+      </div>
     </MDXProvider>
   );
 } 

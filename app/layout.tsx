@@ -1,9 +1,32 @@
 import './globals.css';
 import type { Metadata } from 'next';
-import { Inter } from 'next/font/google';
+import { Playfair_Display, Inter, Montserrat, Merriweather } from 'next/font/google';
 import Link from 'next/link';
 
-const inter = Inter({ subsets: ['latin'] });
+const playfair = Playfair_Display({ 
+  subsets: ['latin'],
+  variable: '--font-playfair',
+  display: 'swap'
+});
+
+const inter = Inter({ 
+  subsets: ['latin'],
+  variable: '--font-inter',
+  display: 'swap'
+});
+
+const montserrat = Montserrat({ 
+  subsets: ['latin'],
+  variable: '--font-montserrat',
+  display: 'swap'
+});
+
+const merriweather = Merriweather({ 
+  weight: ['300', '400', '700', '900'],
+  subsets: ['latin'],
+  variable: '--font-merriweather',
+  display: 'swap'
+});
 
 export const metadata: Metadata = {
   title: 'Blog Takuto',
@@ -16,8 +39,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="ja">
-      <body className={inter.className}>
+    <html lang="ja" className="light">
+      <body className={`${inter.variable} ${playfair.variable} ${montserrat.variable} ${merriweather.variable} font-sans dark:bg-gray-900 dark:text-white`}>
         <header className="bg-white shadow-sm sticky top-0 z-10">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex justify-between items-center h-16">

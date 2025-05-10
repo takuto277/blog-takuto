@@ -2,6 +2,29 @@ import { db } from './firebase';
 import { collection, doc, getDoc, getDocs, addDoc, updateDoc, deleteDoc, query, orderBy, where, limit, Timestamp } from 'firebase/firestore';
 import { Post } from '@/types';
 
+// Firestoreのタイムスタンプをシリアライズ可能な形式に変換する関数
+function convertTimestamps(obj: any): any {
+  if (obj === null || obj === undefined || typeof obj !== 'object') {
+    return obj;
+  }
+
+  if (obj instanceof Timestamp) {
+    // タイムスタンプをISOフォーマットの文字列に変換
+    return obj.toDate().toISOString();
+  }
+
+  if (Array.isArray(obj)) {
+    return obj.map(convertTimestamps);
+  }
+
+  const result: Record<string, any> = {};
+  Object.keys(obj).forEach(key => {
+    result[key] = convertTimestamps(obj[key]);
+  });
+
+  return result;
+}
+
 // コレクション参照
 const postsCollection = collection(db, 'posts');
 
@@ -10,10 +33,16 @@ export async function getAllPosts(): Promise<Post[]> {
   const q = query(postsCollection, orderBy('publishedAt', 'desc'));
   const snapshot = await getDocs(q);
   
-  return snapshot.docs.map(doc => ({
-    id: doc.id,
-    ...doc.data(),
-  } as Post));
+  const posts = snapshot.docs.map(doc => {
+    const data = doc.data();
+    return {
+      id: doc.id,
+      ...data,
+    } as Post;
+  });
+  
+  // タイムスタンプをシリアライズ可能な形式に変換
+  return convertTimestamps(posts);
 }
 
 // 公開済みの記事を取得
@@ -26,10 +55,16 @@ export async function getPublishedPosts(): Promise<Post[]> {
   );
   const snapshot = await getDocs(q);
   
-  return snapshot.docs.map(doc => ({
-    id: doc.id,
-    ...doc.data(),
-  } as Post));
+  const posts = snapshot.docs.map(doc => {
+    const data = doc.data();
+    return {
+      id: doc.id,
+      ...data,
+    } as Post;
+  });
+  
+  // タイムスタンプをシリアライズ可能な形式に変換
+  return convertTimestamps(posts);
 }
 
 // スラッグから記事を取得
@@ -42,10 +77,13 @@ export async function getPostBySlug(slug: string): Promise<Post | null> {
   }
   
   const doc = snapshot.docs[0];
-  return {
+  const post = {
     id: doc.id,
     ...doc.data(),
   } as Post;
+  
+  // タイムスタンプをシリアライズ可能な形式に変換
+  return convertTimestamps(post);
 }
 
 // IDから記事を取得
@@ -55,10 +93,13 @@ export async function getPostById(id: string): Promise<Post | null> {
     const docSnap = await getDoc(docRef);
     
     if (docSnap.exists()) {
-      return {
+      const post = {
         id: docSnap.id,
         ...docSnap.data()
       } as Post;
+      
+      // タイムスタンプをシリアライズ可能な形式に変換
+      return convertTimestamps(post);
     } else {
       return null;
     }

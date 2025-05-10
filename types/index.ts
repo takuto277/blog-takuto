@@ -1,16 +1,16 @@
 import { Timestamp } from 'firebase/firestore';
 
-export interface Post {
+export type Post = {
   id: string;
   title: string;
   slug: string;
-  excerpt: string;
   content: string;
+  excerpt: string;
+  publishedAt: Timestamp | string;
+  updatedAt?: Timestamp | string;
   coverImage?: string;
-  publishedAt: Timestamp | Date;
-  updatedAt?: Timestamp | Date;
   tags?: string[];
-}
+};
 
 export interface PageProps {
   params: {

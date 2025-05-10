@@ -4,7 +4,7 @@ module.exports = {
     './app/**/*.{js,ts,jsx,tsx}',
     './components/**/*.{js,ts,jsx,tsx}',
   ],
-  darkMode: 'class', // ダークモードを有効化
+  // darkMode: 'class', // この行を削除または以下のようにコメントアウト
   theme: {
     extend: {
       fontFamily: {
@@ -34,16 +34,6 @@ module.exports = {
               },
             },
             // 他のスタイル
-          },
-        },
-        // ダークモード用のスタイル
-        dark: {
-          css: {
-            color: theme('colors.gray.200'),
-            h2: {
-              color: theme('colors.gray.100'),
-            },
-            // 他のダークモードスタイル
           },
         },
       }),

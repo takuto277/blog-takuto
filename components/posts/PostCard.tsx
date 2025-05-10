@@ -1,14 +1,25 @@
 'use client';
 
 import Link from 'next/link';
-import { Post } from '@/types';
-import { formatDate } from '@/utils/date';
 
 type PostCardProps = {
-  post: Post;
+  post: {
+    slug: string;
+    title: string;
+    excerpt: string;
+    publishedAt: string;
+    coverImage?: string;
+    tags?: string[];
+  };
 };
 
 export default function PostCard({ post }: PostCardProps) {
+  // 日付のフォーマット
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('ja-JP');
+  };
+
   return (
     <div className="group bg-white rounded-xl shadow-sm hover:shadow-md transition-all duration-300 overflow-hidden border border-gray-100 hover:border-gray-200 flex flex-col h-full transform hover:-translate-y-1">
       {post.coverImage && (

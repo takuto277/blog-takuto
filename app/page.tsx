@@ -1,27 +1,21 @@
-import { getPublishedPosts } from '@/lib/firestore';
 import HeroSection from '@/components/home/HeroSection';
 import RecentPostsSection from '@/components/home/RecentPostsSection';
 import AuthorProfileSection from '@/components/home/AuthorProfileSection';
+import { getAllPosts } from '@/lib/mdx';
 
 /**
  * ホームページコンポーネント
  * 最新の記事を取得して表示する
  */
-export default async function Home() {
-  // 最新の4件の記事を取得
-  const posts = await getPublishedPosts();
-  const recentPosts = posts.slice(0, 4);
+export default async function HomePage() {
+  const allPosts = await getAllPosts();
+  const recentPosts = allPosts.slice(0, 4); // 最新の4記事を取得
   
   return (
-    <div className="min-h-screen bg-gradient-to-b from-white to-gray-50">
-      {/* ヒーローセクション */}
+    <main>
       <HeroSection />
-      
-      {/* 最新記事セクション */}
       <RecentPostsSection posts={recentPosts} />
-      
-      {/* プロフィールセクション */}
       <AuthorProfileSection />
-    </div>
+    </main>
   );
 }

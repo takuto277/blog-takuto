@@ -2,6 +2,7 @@ import './globals.css';
 import type { Metadata } from 'next';
 import { Playfair_Display, Inter, Montserrat, Merriweather } from 'next/font/google';
 import Link from 'next/link';
+import 'highlight.js/styles/github-dark.css';
 
 const playfair = Playfair_Display({ 
   subsets: ['latin'],
@@ -39,8 +40,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="ja" className="light">
-      <body className={`${inter.variable} ${playfair.variable} ${montserrat.variable} ${merriweather.variable} font-sans dark:bg-gray-900 dark:text-white`}>
+    <html lang="ja">
+      <body className={`${inter.variable} ${playfair.variable} ${montserrat.variable} ${merriweather.variable} font-sans`}>
         <header className="bg-white shadow-sm sticky top-0 z-10">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex justify-between items-center h-16">
@@ -57,9 +58,6 @@ export default function RootLayout({
                 </Link>
                 <Link href="/posts" className="text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium">
                   記事一覧
-                </Link>
-                <Link href="/admin" className="text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium">
-                  管理画面
                 </Link>
               </nav>
               <div className="md:hidden">
@@ -97,11 +95,6 @@ export default function RootLayout({
                   <li>
                     <Link href="/posts" className="text-gray-300 hover:text-white">
                       記事一覧
-                    </Link>
-                  </li>
-                  <li>
-                    <Link href="/admin" className="text-gray-300 hover:text-white">
-                      管理画面
                     </Link>
                   </li>
                 </ul>

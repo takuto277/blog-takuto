@@ -4,7 +4,7 @@ module.exports = {
     './app/**/*.{js,ts,jsx,tsx,mdx}',
     './components/**/*.{js,ts,jsx,tsx,mdx}',
   ],
-  // darkMode: 'class', // この行を削除または以下のようにコメントアウト
+  // darkMode: false, // or 'media' or 'class'
   theme: {
     extend: {
       fontFamily: {
@@ -23,6 +23,7 @@ module.exports = {
         DEFAULT: {
           css: {
             maxWidth: '100%',
+            color: 'inherit',
             h1: {
               textAlign: 'center',
             },

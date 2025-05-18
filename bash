@@ -27,3 +27,12 @@ npm run build
 git add .
 git commit -m "Downgrade Next.js and React to stable versions"
 git push 
+
+# 既存のインストールコマンドが失敗している可能性があるため、明示的にインストール
+npm install autoprefixer postcss tailwindcss@3.3.2 --save-dev
+npm run dev 
+
+ls node_modules/autoprefixer 
+
+# 開発サーバーを停止（Ctrl+C）してから
+npm run dev 

@@ -43,7 +43,7 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/bui
 5. コミットをプッシュ
 6. デプロイ完了
 
-###　注意
+## 注意
 Dockerをインストールしてますが使ってないです。ローカル環境ではNext.jsの開発サーバーを使用してます。
 ```bash
 # 依存関係のインストール（初回のみ）

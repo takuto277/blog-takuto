@@ -34,3 +34,21 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+
+## ブログの作成
+1. リポジトリのクローン
+2. postsフォルダに.mdxファイルを作成
+3. ブログのタイトル、サムネイル画像、カバー画像を設定
+4. ブログの本文を作成
+5. コミットをプッシュ
+6. デプロイ完了
+
+###　注意
+Dockerをインストールしてますが使ってないです。ローカル環境ではNext.jsの開発サーバーを使用してます。
+```bash
+# 依存関係のインストール（初回のみ）
+npm install
+
+# 開発サーバーの起動
+npm run dev
+```

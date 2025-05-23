@@ -1,0 +1,122 @@
+---
+title: "First create blog"
+titleJa: "iOS開発者がWebフロントエンドに挑戦"
+publishedAt: "2023-06-15"
+excerpt: "My journey from Swift to Web Frontend"
+excerptJa: "SwiftエンジニアがNext.jsとTailwindCSSでブログを作ってみた"
+coverImage: "/images/create_blog_title.png"
+---
+
+<LanguageContent lang="en">
+# Creating My First Blog with AI
+
+<img src="/images/create_blog_title.png" alt="Image description" width="50%" />
+
+## Tools Used
+- Next.js
+- Tailwind CSS
+- MDX
+- AI assistants
+
+The process was smooth and enjoyable.
+</LanguageContent>
+
+<LanguageContent lang="ja">
+
+<img src="/images/create_blog_title.png" alt="Image description" width="50%" />
+
+## はじめに
+
+普段はiOSアプリ開発でSwiftを使っている私ですが、個人ブログを作りたいと思い立ち、Webフロントエンド開発に挑戦することにしました。プログラミング自体には慣れていますが、Web開発の世界は全く別物。この記事では、Swift開発者の視点からWebフロントエンド技術に触れた経験を共有します。
+
+## 異なる世界：SwiftからWebフロントエンドへ
+
+Swift開発者として3年ほど経験を積んできましたが、Webフロントエンド開発は未知の領域でした。最初に直面した課題は「何を使うべきか」という選択肢の多さです。AIに相談したところ、以下のツールが推奨されました：
+
+- **Next.js**：名前は聞いたことがありましたが、詳細は知りませんでした。Reactベースのフレームワークとのこと
+- **Tailwind CSS**：SwiftUIのモディファイアに少し似た、宣言的なスタイリング方法と聞いて興味を持ちました
+- **MDX**：Markdownは日頃から使っていますが、JSXと組み合わせるという概念は新鮮でした
+
+Swift/SwiftUIとの類似点もありそうですが、関連ツールの多さや開発環境の複雑さに圧倒されました。iOSの世界と比べて、Webフロントエンドは選択肢と組み合わせが膨大です。
+
+## 開発プロセス：見慣れない風景
+
+### 1. Next.jsプロジェクトの作成
+
+まず最初に、Next.jsのプロジェクトを作成しました。Xcodeでプロジェクトを作成するのとは全く異なる体験です。
+
+```bash
+npx create-next-app@latest blog-takuto --typescript
+```
+
+TypeScriptは型安全という点でSwiftに近い感覚があり、少し安心しました。しかし、`tsconfig.json`や`package.json`など、見慣れないファイルが多く生成され、最初は戸惑いました。
+
+### 2. SwiftUIとは違うTailwind CSS
+
+SwiftUIでは`.padding()`や`.background()`などのモディファイアでUIをスタイリングしますが、Tailwind CSSでは全てクラス名として指定します。
+
+```html
+<!-- Tailwind CSS -->
+<div class="p-4 bg-blue-500 rounded-lg shadow-md">
+  Hello World
+</div>
+```
+
+```swift
+// SwiftUI
+Text("Hello World")
+    .padding()
+    .background(Color.blue)
+    .cornerRadius(8)
+    .shadow(radius: 4)
+```
+
+概念的には似ていますが、書き方が全く異なり、最初は混乱しました。
+
+### 3. MDXとSwiftUIの違い
+
+SwiftUIではViewを組み合わせてUIを構築しますが、MDXではMarkdownとJSXを組み合わせてコンテンツを作成します。コンポーネントの概念は似ていますが、使い方が異なります。
+
+```bash
+npm install @next/mdx @mdx-js/loader @mdx-js/react
+```
+
+設定ファイルの書き方は、SwiftのPackage.swiftよりも複雑に感じました。
+
+## Swift開発者として感じた違和感と発見
+
+### 1. ビルドプロセスの違い
+
+Swiftでは`xcodebuild`や`swift build`でビルドしますが、Webフロントエンドでは`npm run build`や`npm run dev`を使います。ホットリロードの概念はSwiftUIのプレビューに似ていますが、より高速で便利に感じました。
+
+### 2. パッケージ管理の複雑さ
+
+SwiftのSPMに比べて、npmのパッケージ管理は依存関係が複雑で、`node_modules`フォルダの巨大さに驚きました。また、`package.json`と`package-lock.json`の関係性も最初は理解しづらかったです。
+
+## Swift開発者として理解しやすかった点
+
+- **コンポーネント思考**: SwiftUIのViewコンポーネントとReactコンポーネントは概念的に似ている
+- **状態管理**: SwiftUIの`@State`や`@ObservedObject`とReactの`useState`や`useContext`は似た役割を持つ
+- **型安全**: TypeScriptの型システムはSwiftほど厳格ではないが、型安全性という概念は共通している
+
+## これから学びたいこと
+
+Swift開発者としての経験を活かしつつ、以下の点を深く学んでいきたいと思います：
+
+- **JavaScriptの非同期処理**: SwiftのCombineやAsyncAwaitとの違いを理解する
+- **Reactのライフサイクル**: SwiftUIのライフサイクルとの違いを理解する
+- **CSSの基本概念**: SwiftUIのレイアウトシステムとの違いを理解する
+- **Webのセキュリティモデル**: iOSアプリとWebアプリのセキュリティの違いを学ぶ
+
+## まとめ：異なる世界の橋渡し
+
+Swift開発者としての経験は、Webフロントエンド開発にも部分的に活かせることがわかりました。特に、コンポーネント指向や状態管理の概念は共通しています。しかし、開発環境や開発フローは大きく異なり、新たな学びが多くありました。
+
+ただAIに頼りきったことで、自分で作れるかと言われたらまだその域には全く達していません。これからも自分で作れるようになるためには、もっと頑張らないといけないですね。
+
+ちなみにこのブログ記事を作成しているとき、小学生のようになぜなぜとAIに質問していました。学習がより簡単になったと思います。
+
+この経験から、異なる技術スタックに挑戦することで、プログラミングの理解が深まり、視野が広がることを実感しました。Swift開発者の方々も、時間があればWebフロントエンド開発に触れてみることをお勧めします。
+
+
+</LanguageContent>

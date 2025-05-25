@@ -47,6 +47,15 @@ const CustomH3 = ({ children }) => {
   );
 };
 
+// カスタムpreコンポーネント
+const CustomPre = ({ children, ...props }) => {
+  return (
+    <pre {...props} className="my-4 overflow-auto rounded-lg bg-[#282c34] p-4 text-sm text-white">
+      {children}
+    </pre>
+  );
+};
+
 const MDXComponents = {
   LanguageContent,
   img: CustomImage,
@@ -54,6 +63,12 @@ const MDXComponents = {
   h1: CustomH1,
   h2: CustomH2,
   h3: CustomH3,
+  pre: CustomPre,
+  // CodeBlockを使用するコードを削除し、シンプルなコードコンポーネントに置き換え
+  code: ({ className, children, ...props }) => {
+    // インラインコード
+    return <code className="bg-gray-800 text-pink-400 px-1 py-0.5 rounded font-mono text-sm" {...props}>{children}</code>;
+  },
   // 他のカスタムコンポーネントもここに追加できます
 };
 

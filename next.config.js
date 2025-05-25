@@ -1,6 +1,7 @@
 const withMDX = require('@next/mdx')({
   extension: /\.mdx?$/,
   options: {
+    // プラグインなしでシンプルな設定
     remarkPlugins: [],
     rehypePlugins: [],
     // MDXコンポーネントをインポートするためのパスを指定
@@ -10,17 +11,6 @@ const withMDX = require('@next/mdx')({
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // webpack設定を一時的にコメントアウト
-  /*
-  webpack: (config, { isServer }) => {
-    // React の解決を上書き
-    config.resolve.alias = {
-      ...config.resolve.alias,
-      'react': require.resolve('./react-shim.js'),
-    };
-    return config;
-  },
-  */
   // MDXファイルをページとして扱う設定
   pageExtensions: ['ts', 'tsx', 'js', 'jsx', 'md', 'mdx'],
   typescript: {

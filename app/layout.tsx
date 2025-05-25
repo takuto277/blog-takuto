@@ -1,7 +1,6 @@
 import { Inter, Playfair_Display, Montserrat, Merriweather } from 'next/font/google';
 import './globals.css';
 import type { Metadata } from 'next';
-import 'highlight.js/styles/atom-one-dark.css';
 import ClientLayout from '@/components/ClientLayout';
 
 const playfair = Playfair_Display({ 

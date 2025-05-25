@@ -6,9 +6,7 @@ import MDXComponents from './MDXComponents';
 export default function CustomMDXProvider({ children }) {
   return (
     <MDXProvider components={MDXComponents}>
-      <div className="mx-auto max-w-3xl prose prose-lg prose-blue">
-        {children}
-      </div>
+      {children}
     </MDXProvider>
   );
 } 

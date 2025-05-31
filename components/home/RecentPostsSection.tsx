@@ -11,6 +11,8 @@ type Post = {
   publishedAt: string;
   coverImage?: string;
   tags?: string[];
+  displayTitle?: string;
+  displayExcerpt?: string;
 };
 
 type RecentPostsSectionProps = {
@@ -19,6 +21,15 @@ type RecentPostsSectionProps = {
 
 // コンポーネント定義
 export default function RecentPostsSection({ posts }: RecentPostsSectionProps) {
+  // 修正されたポストデータを準備
+  const localizedPosts = posts.map(post => ({
+    ...post,
+    // displayTitleがあればそれを使い、なければtitleを使用
+    title: post.displayTitle || post.title,
+    // displayExcerptがあればそれを使い、なければexcerptを使用
+    excerpt: post.displayExcerpt || post.excerpt
+  }));
+
   return (
     <section className="py-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
       <div>
@@ -31,7 +42,8 @@ export default function RecentPostsSection({ posts }: RecentPostsSectionProps) {
         
         {posts.length > 0 ? (
           <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-4">
-            {posts.map((post) => (
+            {/* 修正したポストデータを使用 */}
+            {localizedPosts.map((post) => (
               <div key={post.slug}>
                 <PostCard post={post} />
               </div>

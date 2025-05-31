@@ -1,7 +1,7 @@
 import HeroSection from '@/components/home/HeroSection';
 import RecentPostsSection from '@/components/home/RecentPostsSection';
 import AuthorProfileSection from '@/components/home/AuthorProfileSection';
-import { getAllPosts } from '@/lib/mdx';
+import { getAllPostsLocalized } from '@/lib/mdx';
 import Image from 'next/image';
 
 /**
@@ -9,7 +9,7 @@ import Image from 'next/image';
  * 最新の記事を取得して表示する
  */
 export default async function HomePage() {
-  const allPosts = await getAllPosts();
+  const allPosts = await getAllPostsLocalized();
   const recentPosts = allPosts.slice(0, 4); // 最新の4記事を取得
   
   return (
@@ -17,6 +17,14 @@ export default async function HomePage() {
       <HeroSection />
       <RecentPostsSection posts={recentPosts} />
       <AuthorProfileSection />
+      <div>
+        {allPosts.map((post) => (
+          <div key={post.slug}>
+            <h2>{post.displayTitle}</h2>
+            <p>{post.displayExcerpt}</p>
+          </div>
+        ))}
+      </div>
     </main>
   );
 }

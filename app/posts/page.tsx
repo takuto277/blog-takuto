@@ -1,5 +1,5 @@
 import { Metadata } from 'next';
-import { getAllPosts } from '@/lib/mdx';
+import { getAllPostsLocalized } from '@/lib/mdx';
 import ClientPostCard from '@/components/posts/ClientPostCard';
 import LanguageAwareText from '@/components/LanguageAwareText';
 
@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 };
 
 export default async function PostsPage() {
-  const posts = await getAllPosts();
+  const allPosts = await getAllPostsLocalized();
   
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -18,7 +18,7 @@ export default async function PostsPage() {
       </h1>
       
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-        {posts.map(post => (
+        {allPosts.map((post) => (
           <ClientPostCard key={post.slug} post={post} />
         ))}
       </div>

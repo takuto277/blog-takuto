@@ -2,6 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import matter from 'gray-matter';
 import { serialize } from 'next-mdx-remote/serialize';
+import { headers } from 'next/headers';
 
 const postsDirectory = path.join(process.cwd(), 'posts');
 
@@ -82,5 +83,34 @@ export async function getPostsByLanguage(language: string) {
     
     // 言語が一致する記事のみ表示
     return post.frontMatter.language === language;
+  });
+}
+
+// 現在の言語を取得する関数
+export function getCurrentLocale() {
+  const headersList = headers();
+  // Acceptヘッダーからロケールを取得する試み
+  const acceptLanguage = headersList.get('accept-language');
+  
+  // 日本語が含まれていれば'ja'、そうでなければ'en'を返す
+  if (acceptLanguage && acceptLanguage.includes('ja')) {
+    return 'ja';
+  }
+  
+  return 'en'; // デフォルトは英語
+}
+
+// getAllPostsLocalized関数を追加
+export async function getAllPostsLocalized() {
+  const posts = await getAllPosts();
+  const locale = getCurrentLocale();
+  
+  return posts.map(post => {
+    return {
+      ...post,
+      // 言語に応じてタイトルと抜粋を選択
+      displayTitle: locale === 'ja' && post.titleJa ? post.titleJa : post.title,
+      displayExcerpt: locale === 'ja' && post.excerptJa ? post.excerptJa : post.excerpt,
+    };
   });
 } 

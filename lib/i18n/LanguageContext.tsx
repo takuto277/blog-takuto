@@ -1,53 +1,68 @@
 'use client';
 
-import React, { createContext, useState, useEffect, useContext } from 'react';
+import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 
 type LanguageContextType = {
   language: string;
   setLanguage: (lang: string) => void;
 };
 
-const LanguageContext = createContext<LanguageContextType>({
-  language: 'ja',
-  setLanguage: () => {},
-});
+const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
 
-export function LanguageProvider({ children }: { children: React.ReactNode }) {
-  const [language, setLanguage] = useState('ja');
-  const [mounted, setMounted] = useState(false);
-  
+// クッキーを設定する関数
+function setCookieClient(name: string, value: string, days: number) {
+  let expires = '';
+  if (days) {
+    const date = new Date();
+    date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+    expires = '; expires=' + date.toUTCString();
+  }
+  document.cookie = name + '=' + (value || '') + expires + '; path=/';
+}
+
+// クッキーを取得する関数
+function getCookieClient(name: string) {
+  const nameEQ = name + '=';
+  const ca = document.cookie.split(';');
+  for (let i = 0; i < ca.length; i++) {
+    let c = ca[i];
+    while (c.charAt(0) === ' ') c = c.substring(1, c.length);
+    if (c.indexOf(nameEQ) === 0) return c.substring(nameEQ.length, c.length);
+  }
+  return null;
+}
+
+export function LanguageProvider({ children }: { children: ReactNode }) {
+  // クッキーから初期言語設定を取得
+  const [language, setLanguageState] = useState<string>('ja'); // デフォルト値
+
   useEffect(() => {
-    setMounted(true);
-    // ブラウザのローカルストレージから言語設定を取得
-    const savedLanguage = localStorage.getItem('language');
+    // クライアント側でのみ実行
+    const savedLanguage = getCookieClient('NEXT_LOCALE');
     if (savedLanguage) {
-      setLanguage(savedLanguage);
-    } else {
-      // ブラウザの言語設定を取得
-      const browserLang = navigator.language.split('-')[0];
-      const newLang = browserLang === 'ja' ? 'ja' : 'en';
-      setLanguage(newLang);
-      localStorage.setItem('language', newLang);
+      setLanguageState(savedLanguage);
     }
   }, []);
-  
-  const handleSetLanguage = (lang: string) => {
-    setLanguage(lang);
-    localStorage.setItem('language', lang);
+
+  const setLanguage = (lang: string) => {
+    setLanguageState(lang);
+    setCookieClient('NEXT_LOCALE', lang, 30); // 30日間有効
+    
+    // ページをリフレッシュ
+    window.location.reload();
   };
-  
-  // サーバーサイドレンダリング時はデフォルト値を使用
-  if (!mounted) {
-    return <>{children}</>;
-  }
-  
+
   return (
-    <LanguageContext.Provider value={{ language, setLanguage: handleSetLanguage }}>
+    <LanguageContext.Provider value={{ language, setLanguage }}>
       {children}
     </LanguageContext.Provider>
   );
 }
 
 export function useLanguage() {
-  return useContext(LanguageContext);
+  const context = useContext(LanguageContext);
+  if (context === undefined) {
+    throw new Error('useLanguage must be used within a LanguageProvider');
+  }
+  return context;
 } 

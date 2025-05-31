@@ -2,7 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import matter from 'gray-matter';
 import { serialize } from 'next-mdx-remote/serialize';
-import { headers } from 'next/headers';
+import { headers, cookies } from 'next/headers';
 
 const postsDirectory = path.join(process.cwd(), 'posts');
 
@@ -86,13 +86,20 @@ export async function getPostsByLanguage(language: string) {
   });
 }
 
-// 現在の言語を取得する関数
+// 現在の言語を取得する関数を修正
 export function getCurrentLocale() {
-  const headersList = headers();
-  // Acceptヘッダーからロケールを取得する試み
-  const acceptLanguage = headersList.get('accept-language');
+  // クッキーからロケールを取得する
+  const cookieStore = cookies();
+  const localeCookie = cookieStore.get('NEXT_LOCALE');
   
-  // 日本語が含まれていれば'ja'、そうでなければ'en'を返す
+  // クッキーに設定があればそれを使用
+  if (localeCookie?.value) {
+    return localeCookie.value;
+  }
+  
+  // バックアップとしてAccept-Languageヘッダーを使用
+  const headersList = headers();
+  const acceptLanguage = headersList.get('accept-language');
   if (acceptLanguage && acceptLanguage.includes('ja')) {
     return 'ja';
   }

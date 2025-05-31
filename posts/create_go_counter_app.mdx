@@ -1,0 +1,213 @@
+---
+title: "First create blog"
+titleJa: "iOS開発者がバックエンドを触ってみた"
+publishedAt: "2025-5-30"
+excerpt: "My journey from Swift to Web Frontend"
+excerptJa: "SwiftエンジニアがGOでカウンターアプリを作ってみた"
+coverImage: "/images/create_blog_title.png"
+---
+
+<LanguageContent lang="en">
+# Creating My First Blog with AI
+
+<img src="/images/create_blog_title.png" alt="Image description" width="50%" />
+
+## Tools Used
+- Next.js
+- Tailwind CSS
+- MDX
+- AI assistants
+
+The process was smooth and enjoyable.
+</LanguageContent>
+
+<LanguageContent lang="ja">
+
+<img src="/images/create_blog_title.png" alt="Image description" width="50%" />
+
+バックエンドとフロントエンドを繋ぐ：GoとTypeScriptでカウンターアプリを作りました
+はじめに
+ウェブアプリケーション開発において、フロントエンドとバックエンドの連携は基本中の基本です。今回は、最もシンプルなアプリケーションである「カウンターアプリ」で、GoバックエンドとTypeScriptフロントエンドの連携を作ってみました
+このチュートリアルを通じて、次のことが学べました：
+GoによるシンプルなバックエンドAPIの構築
+SQLiteを使ったデータの永続化
+TypeScriptによるフロントエンド開発
+フロントエンドとバックエンドの連携方法
+
+
+完成イメージ
+TODO: 画像をここで添付
+シンプルなUIですが、「増加」ボタンを押すとカウンターが増え、「リセット」ボタンでゼロに戻ります。カウンター値はサーバー側で保存されるため、ブラウザを閉じて再度開いても値が保持されています。
+
+技術スタック
+フロントエンド: HTML, CSS, TypeScript
+バックエンド: Go (Gin Framework)
+データベース: SQLite
+
+バックエンド実装
+1. プロジェクト初期化
+まずは、必要な依存関係をインストールします。
+
+mkdir -p counter-app/backend
+cd counter-app/backend
+go mod init github.com/takuto277/counter_tutorial_app
+go get github.com/mattn/go-sqlite3
+go get github.com/gin-gonic/gin
+go get github.com/gin-contrib/cors
+
+. データベース初期化 (db.go)
+SQLiteデータベースを初期化し、カウンターテーブルを作成します。
+
+func InitDB() (*sql.DB, error) {
+	db, err := sql.Open("sqlite3", "./counter.db")
+	if err != nil {
+		return nil, err
+	}
+
+	// カウンターテーブル作成
+	_, err = db.Exec(`
+		CREATE TABLE IF NOT EXISTS counter (
+			id INTEGER PRIMARY KEY,
+			value INTEGER NOT NULL DEFAULT 0
+		)
+	`)
+	if err != nil {
+		return nil, err
+	}
+
+	// 初期データの確認と挿入
+	var count int
+	err = db.QueryRow("SELECT COUNT(*) FROM counter").Scan(&count)
+	if err != nil {
+		return nil, err
+	}
+
+	if count == 0 {
+		_, err = db.Exec("INSERT INTO counter (id, value) VALUES (1, 0)")
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	return db, nil
+}
+
+
+. カウンター処理 (counter.go)
+カウンターの取得、増加、リセット機能を実装します。
+func (s *CounterService) IncrementCounter(c *gin.Context) {
+	_, err := s.DB.Exec("UPDATE counter SET value = value + 1 WHERE id = 1")
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "カウンターの増加に失敗しました"})
+		return
+	}
+
+	var newValue int
+	err = s.DB.QueryRow("SELECT value FROM counter WHERE id = 1").Scan(&newValue)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "更新後の値の取得に失敗しました"})
+		return
+	}
+
+	c.JSON(http.StatusOK, Counter{Value: newValue})
+}
+
+4. メインサーバー (main.go)
+サーバーの起動とルーティングを設定します。
+func main() {
+	// データベース初期化
+	database, err := db.InitDB()
+	if err != nil {
+		log.Fatalf("データベース初期化エラー: %v", err)
+	}
+	defer database.Close()
+
+	// カウンターサービス作成
+	counterService := counter.NewCounterService(database)
+
+	// Ginルーター設定
+	r := gin.Default()
+
+	// CORS設定
+	r.Use(cors.New(cors.Config{
+		AllowOrigins:     []string{"*"},
+		AllowMethods:     []string{"GET", "POST", "PUT"},
+		AllowHeaders:     []string{"Origin", "Content-Type"},
+		ExposeHeaders:    []string{"Content-Length"},
+		AllowCredentials: true,
+	}))
+
+	// ルート設定
+	r.GET("/counter", counterService.GetCounter)
+	r.PUT("/counter/increment", counterService.IncrementCounter)
+	r.PUT("/counter/reset", counterService.ResetCounter)
+
+	// サーバー起動
+	log.Println("サーバーを起動しています...")
+	r.Run(":8080")
+}
+
+フロントエンド実装
+1. HTML (index.html)
+シンプルなHTMLインターフェイスを作成します。
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Goカウンターアプリ</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Goカウンターアプリ</h1>
+        <div class="counter-container">
+            <div class="counter-value" id="counter">0</div>
+            <div class="buttons">
+                <button id="increment-btn">増加</button>
+                <button id="reset-btn">リセット</button>
+            </div>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
+
+2. CSS (style.css)
+見た目を整えるスタイルを追加します
+
+3. TypeScript (script.ts)
+APIとの通信処理を実装します。
+    const counterElement = document.getElementById('counter') as HTMLDivElement;
+    const API_URL = 'http://localhost:8080';
+
+    const incrementCounter = async (): Promise<void> => {
+        try {
+            const response = await fetch(`${API_URL}/counter/increment`, {
+                method: 'PUT'
+            });
+            const data = await response.json();
+            counterElement.textContent = data.value.toString();
+        } catch (error) {
+            console.error('カウンター増加エラー:', error);
+        }
+    };
+
+バックエンドの起動
+cd backend
+go run main.go
+ターミナルが占領されたのでフロントエンドの操作は別のターミナルを立ち上げて行います
+
+フロントエンドのコンパイル
+cd frontend
+tsc script.ts
+
+
+フロントエンドの表示
+open index.html
+ 静的なHTML/CSS/JavaScriptで構成されているのでサーバーを立ち上げる必要とかなかった
+
+
+
+
+</LanguageContent>
